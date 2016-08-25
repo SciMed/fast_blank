@@ -13,7 +13,7 @@
 #endif
 
 static VALUE
-rb_str_blank_as(VALUE str)
+rb_str_blank(VALUE str)
 {
   rb_encoding *enc;
   char *s, *e;
@@ -66,30 +66,8 @@ rb_str_blank_as(VALUE str)
   return Qtrue;
 }
 
-static VALUE
-rb_str_blank(VALUE str)
-{
-  rb_encoding *enc;
-  char *s, *e;
-
-  enc = STR_ENC_GET(str);
-  s = RSTRING_PTR(str);
-  if (!s || RSTRING_LEN(str) == 0) return Qtrue;
-
-  e = RSTRING_END(str);
-  while (s < e) {
-    int n;
-    unsigned int cc = rb_enc_codepoint_len(s, e, &n, enc);
-
-    if (!rb_isspace(cc) && cc != 0) return Qfalse;
-    s += n;
-  }
-  return Qtrue;
-}
-
 
 void Init_fast_blank( void )
 {
   rb_define_method(rb_cString, "blank?", rb_str_blank, 0);
-  rb_define_method(rb_cString, "blank_as?", rb_str_blank_as, 0);
 }
